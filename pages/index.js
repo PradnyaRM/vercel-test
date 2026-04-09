@@ -12,6 +12,40 @@ const STATUS_LABELS = {
   outage: 'Outage',
 };
 
+const DEPLOY_REQUIREMENTS = [
+  { icon: '⬡', label: 'Runtime',         value: 'Node.js 20.x LTS',    note: 'Fluid Compute (default)' },
+  { icon: '▲', label: 'Framework',        value: 'Next.js 14.2.3',      note: 'Pages Router · SSR' },
+  { icon: '📦', label: 'Package Manager', value: 'npm',                 note: 'package-lock.json' },
+  { icon: '🔨', label: 'Build Command',   value: 'next build',          note: 'Auto-detected by Vercel' },
+  { icon: '📂', label: 'Output Dir',      value: '.next',               note: 'Vercel managed' },
+  { icon: '⏱', label: 'Max Timeout',     value: '300 seconds',         note: 'All plans' },
+];
+
+const VERCEL_FEATURES = [
+  { label: 'Automatic Git Deployments',   desc: 'Every push to main deploys to production automatically',            supported: true  },
+  { label: 'Preview Deployments',         desc: 'Unique URL generated for every pull request branch',                supported: true  },
+  { label: 'Server-Side Rendering (SSR)', desc: 'getServerSideProps runs on Vercel Fluid Compute per request',       supported: true  },
+  { label: 'Serverless API Routes',       desc: '/api/* handlers run as isolated serverless functions',              supported: true  },
+  { label: 'Instant Rollback',            desc: 'One-click rollback to any previous production deployment',          supported: true  },
+  { label: 'Environment Variables',       desc: 'Managed via Vercel dashboard or vercel env pull for local dev',     supported: true  },
+  { label: 'Edge Network / CDN',          desc: 'Static assets and cached responses served from global edge nodes',  supported: true  },
+  { label: 'Custom Domains',             desc: 'Attach any domain with automatic TLS provisioning',                  supported: true  },
+  { label: 'Rolling Releases',            desc: 'Gradual canary rollouts to a percentage of traffic',                supported: true  },
+  { label: 'Vercel Analytics',            desc: 'Core Web Vitals and real-user performance metrics',                 supported: true  },
+  { label: 'Static Site Generation',      desc: 'SSG pages not used in this app — all routes are SSR',              supported: false },
+  { label: 'Edge Functions',             desc: 'Not recommended; use Fluid Compute (Node.js) instead',              supported: false },
+];
+
+const SUPPORT_DETAILS = [
+  { label: 'Compute Model',  value: 'Fluid Compute',         sub: 'Reuses instances across concurrent requests; reduces cold starts' },
+  { label: 'Pricing Model',  value: 'Active CPU Time',        sub: 'Charged for active CPU, provisioned memory, and invocations' },
+  { label: 'Regions',        value: 'Auto (Global)',          sub: 'Closest region selected automatically per request' },
+  { label: 'Environments',   value: 'Production / Preview / Development', sub: 'Separate env vars per environment via Vercel dashboard' },
+  { label: 'CI/CD',          value: 'GitHub Actions + Vercel', sub: '.github/workflows/vercel.yml handles build & deploy pipeline' },
+  { label: 'Health Endpoint',value: '/api/health',            sub: 'Returns 200 OK — used by Vercel to confirm function boot' },
+  { label: 'Status Endpoint',value: '/api/status',           sub: 'Returns JSON service status for external monitoring' },
+];
+
 const globalStyles = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #000; }
@@ -112,6 +146,65 @@ const globalStyles = `
     border-color: #555;
     color: #fff;
   }
+
+  .deploy-req-card {
+    background: #111;
+    border: 1px solid #1f1f1f;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    flex: 1;
+    min-width: 160px;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    animation: fadeIn 0.3s ease both;
+  }
+  .deploy-req-card:hover {
+    border-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  }
+
+  .feature-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    border-bottom: 1px solid #1a1a1a;
+    cursor: default;
+  }
+  .feature-row:last-child { border-bottom: none; }
+  .feature-row:hover { background: #141414; }
+
+  .support-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 16px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    border-bottom: 1px solid #1a1a1a;
+    transition: background 0.15s;
+  }
+  .support-row:last-child { border-bottom: none; }
+  .support-row:hover { background: #141414; }
+
+  .section-tab {
+    background: transparent;
+    border: 1px solid #222;
+    color: #6b7280;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .section-tab.active {
+    background: #1a1a1a;
+    border-color: #444;
+    color: #e5e7eb;
+  }
+  .section-tab:hover { border-color: #333; color: #ccc; }
 `;
 
 function PulseDot({ status }) {
@@ -227,6 +320,7 @@ export default function StatusPage({ services: initialServices, incidents, metri
   const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
   const [filter, setFilter] = useState('all');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [deployTab, setDeployTab] = useState('requirements');
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -271,14 +365,26 @@ export default function StatusPage({ services: initialServices, incidents, metri
           {/* Header */}
           <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 style={{
-                fontSize: '1.7rem', fontWeight: 800, letterSpacing: '-0.02em',
-                background: 'linear-gradient(90deg, #fff 0%, #888 100%)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              }}>
-                SRE Status Dashboard
-              </h1>
-              <p style={{ color: '#4b5563', marginTop: 4, fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                  borderRadius: 8, width: 32, height: 32,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem', flexShrink: 0,
+                }}>▲</span>
+                <div>
+                  <h1 style={{
+                    fontSize: '1.7rem', fontWeight: 800, letterSpacing: '-0.02em',
+                    background: 'linear-gradient(90deg, #fff 30%, #6b7280 100%)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    lineHeight: 1.1,
+                  }}>Pivotree</h1>
+                  <div style={{ fontSize: '0.72rem', color: '#3b82f6', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
+                    Automatic App Deployment
+                  </div>
+                </div>
+              </div>
+              <p style={{ color: '#4b5563', marginTop: 6, fontSize: '0.82rem' }}>
                 Real-time system health &nbsp;·&nbsp; Last updated: <span style={{ color: '#9ca3af' }}>{time}</span>
               </p>
               <CountdownBar seconds={countdown} total={REFRESH_INTERVAL} />
@@ -347,8 +453,70 @@ export default function StatusPage({ services: initialServices, incidents, metri
             }
           </div>
 
+          {/* Deployment Info */}
+          <div style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12, padding: '1rem 1.2rem', marginTop: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Vercel Deployment
+                </h2>
+                <p style={{ fontSize: '0.75rem', color: '#374151', marginTop: 2 }}>Requirements, features &amp; support details</p>
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {['requirements', 'features', 'support'].map(tab => (
+                  <button key={tab} className={`section-tab ${deployTab === tab ? 'active' : ''}`} onClick={() => setDeployTab(tab)}>
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {deployTab === 'requirements' && (
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                {DEPLOY_REQUIREMENTS.map((r, i) => (
+                  <div key={r.label} className="deploy-req-card" style={{ animationDelay: `${i * 50}ms` }}>
+                    <div style={{ fontSize: '1.1rem', marginBottom: 6 }}>{r.icon}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>{r.label}</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#e5e7eb' }}>{r.value}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#4b5563', marginTop: 2 }}>{r.note}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {deployTab === 'features' && (
+              <div>
+                {VERCEL_FEATURES.map((f, i) => (
+                  <div key={f.label} className="feature-row" style={{ animationDelay: `${i * 30}ms` }}>
+                    <span style={{ fontSize: '0.85rem', marginTop: 1, flexShrink: 0 }}>
+                      {f.supported ? '✅' : '🚫'}
+                    </span>
+                    <div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 500, color: f.supported ? '#e5e7eb' : '#6b7280' }}>{f.label}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: 2 }}>{f.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {deployTab === 'support' && (
+              <div>
+                {SUPPORT_DETAILS.map((s, i) => (
+                  <div key={s.label} className="support-row" style={{ animationDelay: `${i * 40}ms` }}>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.04em', paddingTop: 2 }}>{s.label}</div>
+                    <div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#e5e7eb' }}>{s.value}</div>
+                      <div style={{ fontSize: '0.74rem', color: '#4b5563', marginTop: 2 }}>{s.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <p style={{ textAlign: 'center', color: '#374151', fontSize: '0.75rem', marginTop: '2rem' }}>
-            Powered by Vercel &nbsp;·&nbsp; vercel-test POC
+            Pivotree &nbsp;·&nbsp; Powered by Vercel
           </p>
         </div>
       </div>
