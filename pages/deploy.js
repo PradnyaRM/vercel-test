@@ -12,6 +12,29 @@ const FRAMEWORKS = [
   { id: 'other',   label: 'Other',     icon: '◻', color: '#9ca3af' },
 ];
 
+const NODE_VERSIONS = [
+  { id: '18.x', label: 'Node 18', sub: 'LTS (older)' },
+  { id: '20.x', label: 'Node 20', sub: 'LTS (stable)' },
+  { id: '22.x', label: 'Node 22', sub: 'LTS (latest)'  },
+];
+
+const REGIONS = [
+  { id: 'auto', label: 'Auto',    sub: 'Nearest region'  },
+  { id: 'iad1', label: 'US East', sub: 'Washington D.C.' },
+  { id: 'sfo1', label: 'US West', sub: 'San Francisco'   },
+  { id: 'cdg1', label: 'Europe',  sub: 'Paris'           },
+  { id: 'hnd1', label: 'Asia',    sub: 'Tokyo'           },
+  { id: 'bom1', label: 'India',   sub: 'Mumbai'          },
+];
+
+const INSTALL_CMDS = [
+  { id: '',               label: 'Auto',    sub: 'Vercel detects' },
+  { id: 'npm install',    label: 'npm',     sub: 'npm install'    },
+  { id: 'yarn',           label: 'Yarn',    sub: 'yarn'           },
+  { id: 'pnpm install',   label: 'pnpm',    sub: 'pnpm install'   },
+  { id: 'bun install',    label: 'Bun',     sub: 'bun install'    },
+];
+
 const DEPLOY_STEPS = [
   { id: 'validate',  label: 'Validating inputs'                 },
   { id: 'bitbucket', label: 'Connecting to Bitbucket'           },
@@ -133,6 +156,24 @@ const globalStyles = `
     width:16px; height:16px; border:2px solid #3b82f633;
     border-top-color:#3b82f6; border-radius:50%; flex-shrink:0;
     animation:spin 0.7s linear infinite;
+  }
+
+  .opt-pill {
+    background:#111; border:1px solid #222; border-radius:8px;
+    padding:8px 12px; cursor:pointer; text-align:center;
+    transition:border-color 0.15s, background 0.15s;
+    min-width:72px; font-family:inherit;
+  }
+  .opt-pill:hover { border-color:#3b82f633; }
+  .opt-pill.sel   { border-color:#3b82f6; background:#0c1a2e; }
+
+  .toggle-switch {
+    width:42px; height:24px; border-radius:12px; border:none; cursor:pointer;
+    position:relative; transition:background 0.2s; flex-shrink:0; padding:0;
+  }
+  .toggle-knob {
+    position:absolute; top:3px; width:18px; height:18px;
+    border-radius:50%; background:#fff; transition:left 0.2s;
   }
 
   .code-pre {
@@ -330,6 +371,12 @@ export default function DeployPage() {
     framework: 'nextjs',
     deployType: 'preview',
     envVars: [{ key: '', value: '' }],
+    nodeVersion: '20.x',
+    region: 'auto',
+    installCmd: '',
+    buildCommand: '',
+    rootDirectory: '',
+    autoDeploy: true,
   });
   const [errors, setErrors] = useState({});
   const [currentStepId, setCurrentStepId] = useState('validate');
@@ -395,12 +442,18 @@ export default function DeployPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectName: form.projectName,
-          repoUrl: form.repoUrl,
-          branch: form.branch,
-          framework: form.framework,
-          deployType: form.deployType,
-          envVars: form.envVars.filter(e => e.key.trim()),
+          projectName:  form.projectName,
+          repoUrl:      form.repoUrl,
+          branch:       form.branch,
+          framework:    form.framework,
+          deployType:   form.deployType,
+          envVars:      form.envVars.filter(e => e.key.trim()),
+          nodeVersion:  form.nodeVersion,
+          region:       form.region,
+          installCmd:   form.installCmd,
+          buildCommand: form.buildCommand,
+          rootDirectory: form.rootDirectory,
+          autoDeploy:   form.autoDeploy,
         }),
       });
 
@@ -540,6 +593,73 @@ export default function DeployPage() {
                 </p>
               </LabelledField>
 
+              {/* Node.js Version */}
+              <LabelledField label="Node.js Version">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {NODE_VERSIONS.map(nv => (
+                    <button key={nv.id} className={`opt-pill ${form.nodeVersion === nv.id ? 'sel' : ''}`}
+                      onClick={() => setField('nodeVersion', nv.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.nodeVersion === nv.id ? '#93c5fd' : '#9ca3af' }}>{nv.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#374151', marginTop: 2 }}>{nv.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Region */}
+              <LabelledField label="Deploy Region" hint="Fluid Compute auto-routes to nearest">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {REGIONS.map(r => (
+                    <button key={r.id} className={`opt-pill ${form.region === r.id ? 'sel' : ''}`}
+                      onClick={() => setField('region', r.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.region === r.id ? '#93c5fd' : '#9ca3af' }}>{r.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#374151', marginTop: 2 }}>{r.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Install Command */}
+              <LabelledField label="Package Manager" hint="Sets the install command">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {INSTALL_CMDS.map(ic => (
+                    <button key={ic.id} className={`opt-pill ${form.installCmd === ic.id ? 'sel' : ''}`}
+                      onClick={() => setField('installCmd', ic.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.installCmd === ic.id ? '#93c5fd' : '#9ca3af' }}>{ic.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#374151', marginTop: 2 }}>{ic.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Build Command override */}
+              <LabelledField label="Build Command" hint="Leave blank to use framework default">
+                <input className="dp-input" placeholder={`e.g. npm run build`}
+                  value={form.buildCommand} onChange={e => setField('buildCommand', e.target.value)} />
+              </LabelledField>
+
+              {/* Root Directory */}
+              <LabelledField label="Root Directory" hint="For monorepos — leave blank for repo root">
+                <input className="dp-input" placeholder="e.g. apps/web"
+                  value={form.rootDirectory} onChange={e => setField('rootDirectory', e.target.value)} />
+              </LabelledField>
+
+              {/* Auto Deploy */}
+              <LabelledField label="Trigger Deployment Immediately">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <button
+                    className="toggle-switch"
+                    style={{ background: form.autoDeploy ? '#2563eb' : '#1f1f1f' }}
+                    onClick={() => setField('autoDeploy', !form.autoDeploy)}
+                  >
+                    <div className="toggle-knob" style={{ left: form.autoDeploy ? 21 : 3 }} />
+                  </button>
+                  <span style={{ fontSize: '0.82rem', color: form.autoDeploy ? '#60a5fa' : '#4b5563' }}>
+                    {form.autoDeploy ? 'Deploy right after project setup' : 'Set up hook only — trigger manually later'}
+                  </span>
+                </div>
+              </LabelledField>
+
               {/* Environment Variables */}
               <LabelledField label="Environment Variables" hint="Optional">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -565,11 +685,17 @@ export default function DeployPage() {
               </h2>
 
               {[
-                ['Project', form.projectName || '—'],
-                ['Repository', form.repoUrl || '—'],
-                ['Branch', form.branch],
-                ['Framework', selectedFw?.label || form.framework],
-                ['Target', form.deployType === 'production' ? '🟢 Production' : '🔵 Preview'],
+                ['Project',       form.projectName || '—'],
+                ['Repository',    form.repoUrl || '—'],
+                ['Branch',        form.branch],
+                ['Framework',     selectedFw?.label || form.framework],
+                ['Node.js',       form.nodeVersion],
+                ['Region',        REGIONS.find(r => r.id === form.region)?.label || form.region],
+                ['Package Mgr',   INSTALL_CMDS.find(c => c.id === form.installCmd)?.label || 'Auto'],
+                ['Build Cmd',     form.buildCommand || 'Framework default'],
+                ['Root Dir',      form.rootDirectory || '/ (root)'],
+                ['Target',        form.deployType === 'production' ? '🟢 Production' : '🔵 Preview'],
+                ['Auto Deploy',   form.autoDeploy ? '✓ Trigger immediately' : 'Hook only'],
                 ['Env Variables', `${form.envVars.filter(e => e.key.trim()).length} configured`],
               ].map(([k, v]) => (
                 <div className="review-row" key={k}>

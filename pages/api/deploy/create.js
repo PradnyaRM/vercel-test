@@ -40,7 +40,10 @@ pipelines:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { projectName, repoUrl, branch, framework, deployType, envVars } = req.body;
+  const {
+    projectName, repoUrl, branch, framework, deployType, envVars,
+    nodeVersion, region, installCmd, buildCommand, rootDirectory, autoDeploy,
+  } = req.body;
 
   // ── Validate inputs ────────────────────────────────────────────────────────
   if (!projectName?.trim()) return res.status(400).json({ error: 'Project name is required', step: 'validate' });
@@ -122,7 +125,13 @@ export default async function handler(req, res) {
 
     // ── Step 2: Create Vercel project ─────────────────────────────────────────
     const createBody = { name: sanitized };
-    if (FRAMEWORK_VERCEL_MAP[framework]) createBody.framework = FRAMEWORK_VERCEL_MAP[framework];
+    if (FRAMEWORK_VERCEL_MAP[framework])   createBody.framework       = FRAMEWORK_VERCEL_MAP[framework];
+    if (nodeVersion)                        createBody.nodeVersion     = nodeVersion;
+    if (buildCommand?.trim())               createBody.buildCommand    = buildCommand.trim();
+    if (installCmd?.trim())                 createBody.installCommand  = installCmd.trim();
+    if (rootDirectory?.trim() && rootDirectory.trim() !== '/')
+                                            createBody.rootDirectory   = rootDirectory.trim();
+    if (region && region !== 'auto')        createBody.serverlessFunctionRegion = region;
 
     let projectData;
     const createRes = await fetch(`https://api.vercel.com/v9/projects${teamParam}`, {
@@ -184,19 +193,25 @@ export default async function handler(req, res) {
       : null;
     record.hookUrl = hookUrl;
 
-    // ── Step 5: Trigger deployment via hook ───────────────────────────────────
+    // ── Step 5: Trigger deployment via hook (only if autoDeploy is true) ────────
     let triggeredDeployId = null;
-    if (hookUrl) {
+    if (autoDeploy !== false && hookUrl) {
       const trigRes = await fetch(hookUrl, { method: 'POST' });
       const trigJson = await trigRes.json().catch(() => ({}));
       triggeredDeployId = trigJson.job?.id || trigJson.deploymentId || null;
     }
     record.triggeredDeployId = triggeredDeployId;
+    record.autoDeploy = autoDeploy !== false;
 
     // Canonical project URL (auto-assigned by Vercel)
     const deploymentUrl = `https://${sanitized}.vercel.app`;
     record.deploymentUrl = deploymentUrl;
-    record.status = 'triggered';
+    record.status = autoDeploy !== false ? 'triggered' : 'hook_ready';
+    record.nodeVersion   = nodeVersion  || '20.x';
+    record.region        = region       || 'auto';
+    record.installCmd    = installCmd   || '';
+    record.buildCommand  = buildCommand || '';
+    record.rootDirectory = rootDirectory || '';
 
     // ── Persist to history ────────────────────────────────────────────────────
     global._deployHistory.unshift(record);
