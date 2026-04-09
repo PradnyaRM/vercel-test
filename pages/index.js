@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 
 const STATUS_COLORS = {
   operational: '#22c55e',
@@ -359,8 +360,16 @@ export default function StatusPage({ services: initialServices, incidents, metri
   return (
     <>
       <style>{globalStyles}</style>
-      <div style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#000', minHeight: '100vh', padding: '2rem 1rem', color: '#e5e7eb' }}>
-        <div style={{ maxWidth: 780, margin: '0 auto' }}>
+      <div style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#000', minHeight: '100vh', color: '#e5e7eb' }}>
+        {/* Nav */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 4, borderBottom: '1px solid #111', padding: '12px 1rem' }}>
+          <Link href="/"        style={{ color: '#e5e7eb', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, background: '#1a1a1a' }}>Dashboard</Link>
+          <span style={{ color: '#333' }}>·</span>
+          <Link href="/deploy"  style={{ color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>Deploy</Link>
+          <span style={{ color: '#333' }}>·</span>
+          <Link href="/history" style={{ color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>History</Link>
+        </nav>
+        <div style={{ maxWidth: 780, margin: '0 auto', padding: '2rem 1rem' }}>
 
           {/* Header */}
           <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
