@@ -12,6 +12,29 @@ const FRAMEWORKS = [
   { id: 'other',   label: 'Other',     icon: '◻', color: '#9ca3af' },
 ];
 
+const NODE_VERSIONS = [
+  { id: '18.x', label: 'Node 18', sub: 'LTS (older)' },
+  { id: '20.x', label: 'Node 20', sub: 'LTS (stable)' },
+  { id: '22.x', label: 'Node 22', sub: 'LTS (latest)'  },
+];
+
+const REGIONS = [
+  { id: 'auto', label: 'Auto',    sub: 'Nearest region'  },
+  { id: 'iad1', label: 'US East', sub: 'Washington D.C.' },
+  { id: 'sfo1', label: 'US West', sub: 'San Francisco'   },
+  { id: 'cdg1', label: 'Europe',  sub: 'Paris'           },
+  { id: 'hnd1', label: 'Asia',    sub: 'Tokyo'           },
+  { id: 'bom1', label: 'India',   sub: 'Mumbai'          },
+];
+
+const INSTALL_CMDS = [
+  { id: '',               label: 'Auto',    sub: 'Vercel detects' },
+  { id: 'npm install',    label: 'npm',     sub: 'npm install'    },
+  { id: 'yarn',           label: 'Yarn',    sub: 'yarn'           },
+  { id: 'pnpm install',   label: 'pnpm',    sub: 'pnpm install'   },
+  { id: 'bun install',    label: 'Bun',     sub: 'bun install'    },
+];
+
 const DEPLOY_STEPS = [
   { id: 'validate',  label: 'Validating inputs'                 },
   { id: 'bitbucket', label: 'Connecting to Bitbucket'           },
@@ -24,98 +47,99 @@ const DEPLOY_STEPS = [
 
 const globalStyles = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #000; }
+  body { background: #e8f4fd; }
 
   @keyframes fadeIn  { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
   @keyframes spin    { from { transform:rotate(0deg); }  to { transform:rotate(360deg); } }
   @keyframes blink   { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
   .dp-input {
-    width:100%; background:#111; border:1px solid #2a2a2a; color:#e5e7eb;
+    width:100%; background:#ffffff; border:1px solid #cbd5e1; color:#1e293b;
     padding:10px 12px; border-radius:8px; font-size:0.9rem; outline:none;
     transition:border-color 0.15s; font-family:inherit;
   }
-  .dp-input:focus  { border-color:#3b82f6; }
-  .dp-input::placeholder { color:#374151; }
+  .dp-input:focus  { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
+  .dp-input::placeholder { color:#94a3b8; }
 
   .dp-select {
-    width:100%; background:#111; border:1px solid #2a2a2a; color:#e5e7eb;
+    width:100%; background:#ffffff; border:1px solid #cbd5e1; color:#1e293b;
     padding:10px 12px; border-radius:8px; font-size:0.9rem; outline:none;
     transition:border-color 0.15s; font-family:inherit; cursor:pointer;
     -webkit-appearance:none; appearance:none;
   }
-  .dp-select:focus { border-color:#3b82f6; }
-  .dp-select option { background:#111; }
+  .dp-select:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
+  .dp-select option { background:#ffffff; color:#1e293b; }
 
   .fw-card {
-    border:1px solid #222; border-radius:10px; padding:10px 14px; cursor:pointer;
-    display:flex; align-items:center; gap:8px; background:#111; min-width:110px;
-    transition:border-color 0.15s, background 0.15s; animation:fadeIn 0.2s ease both;
+    border:1px solid #dbeafe; border-radius:10px; padding:10px 14px; cursor:pointer;
+    display:flex; align-items:center; gap:8px; background:#ffffff; min-width:110px;
+    transition:border-color 0.15s, background 0.15s, box-shadow 0.15s; animation:fadeIn 0.2s ease both;
   }
-  .fw-card:hover   { border-color:#444; }
-  .fw-card.sel     { border-color:#3b82f6; background:#0c1a2e; }
+  .fw-card:hover   { border-color:#93c5fd; box-shadow:0 2px 8px rgba(37,99,235,0.1); }
+  .fw-card.sel     { border-color:#2563eb; background:#dbeafe; box-shadow:0 2px 8px rgba(37,99,235,0.15); }
 
   .env-input {
-    background:#111; border:1px solid #222; color:#e5e7eb; padding:8px 10px;
+    background:#f8fbff; border:1px solid #dbeafe; color:#1e293b; padding:8px 10px;
     border-radius:6px; font-size:0.82rem; outline:none; transition:border-color 0.15s;
     font-family:'SF Mono','Fira Code',monospace; width:100%;
   }
-  .env-input:focus { border-color:#3b82f6; }
-  .env-input::placeholder { color:#374151; }
+  .env-input:focus { border-color:#2563eb; }
+  .env-input::placeholder { color:#94a3b8; }
 
   .env-del {
-    background:transparent; border:1px solid #2a2a2a; color:#6b7280;
+    background:transparent; border:1px solid #dbeafe; color:#94a3b8;
     width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:1rem;
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
     transition:all 0.15s;
   }
-  .env-del:hover { background:#450a0a; border-color:#7f1d1d; color:#f87171; }
+  .env-del:hover { background:#fee2e2; border-color:#fca5a5; color:#dc2626; }
 
   .add-env {
-    background:transparent; border:1px dashed #2a2a2a; color:#4b5563;
+    background:transparent; border:1px dashed #cbd5e1; color:#94a3b8;
     padding:7px; border-radius:6px; font-size:0.8rem; cursor:pointer;
     transition:all 0.15s; width:100%; text-align:center;
   }
-  .add-env:hover { border-color:#3b82f6; color:#60a5fa; background:#0c1a2e; }
+  .add-env:hover { border-color:#2563eb; color:#2563eb; background:#dbeafe; }
 
   .btn-deploy {
     background:linear-gradient(135deg,#2563eb,#7c3aed); border:none; color:#fff;
     padding:12px 32px; border-radius:8px; font-size:0.95rem; font-weight:600;
     cursor:pointer; transition:opacity 0.15s,transform 0.15s; letter-spacing:0.02em;
+    box-shadow:0 4px 14px rgba(37,99,235,0.3);
   }
   .btn-deploy:hover   { opacity:0.9; transform:translateY(-1px); }
   .btn-deploy:active  { transform:translateY(0); }
   .btn-deploy:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
 
   .btn-back {
-    background:#111; border:1px solid #2a2a2a; color:#9ca3af;
+    background:#f1f5f9; border:1px solid #cbd5e1; color:#475569;
     padding:10px 20px; border-radius:8px; font-size:0.9rem; cursor:pointer;
     transition:all 0.15s;
   }
-  .btn-back:hover { background:#1a1a1a; color:#e5e7eb; border-color:#444; }
+  .btn-back:hover { background:#e2e8f0; color:#1e293b; border-color:#94a3b8; }
 
   .btn-next {
-    background:#0c1a2e; border:1px solid #3b82f6; color:#60a5fa;
+    background:#2563eb; border:1px solid #2563eb; color:#ffffff;
     padding:10px 24px; border-radius:8px; font-size:0.9rem; font-weight:500;
-    cursor:pointer; transition:all 0.15s;
+    cursor:pointer; transition:all 0.15s; box-shadow:0 2px 8px rgba(37,99,235,0.25);
   }
-  .btn-next:hover { background:#0f2040; color:#93c5fd; }
+  .btn-next:hover { background:#1d4ed8; border-color:#1d4ed8; }
 
   .btn-outline {
-    background:#111; border:1px solid #333; color:#9ca3af;
+    background:#f1f5f9; border:1px solid #cbd5e1; color:#475569;
     padding:7px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer;
     transition:all 0.15s;
   }
-  .btn-outline:hover { background:#1a1a1a; color:#e5e7eb; border-color:#555; }
+  .btn-outline:hover { background:#e2e8f0; color:#1e293b; border-color:#94a3b8; }
 
-  .type-toggle { display:flex; border:1px solid #222; border-radius:8px; overflow:hidden; }
+  .type-toggle { display:flex; border:1px solid #dbeafe; border-radius:8px; overflow:hidden; background:#f8fbff; }
   .type-btn {
-    background:transparent; border:none; color:#6b7280;
+    background:transparent; border:none; color:#64748b;
     padding:8px 22px; font-size:0.85rem; cursor:pointer;
     transition:all 0.15s; flex:1; font-family:inherit;
   }
-  .type-btn.preview-on    { background:#0c1a2e; color:#60a5fa; }
-  .type-btn.production-on { background:#0a1f0a; color:#4ade80; }
+  .type-btn.preview-on    { background:#dbeafe; color:#2563eb; font-weight:500; }
+  .type-btn.production-on { background:#dcfce7; color:#16a34a; font-weight:500; }
 
   .step-dot {
     width:28px; height:28px; border-radius:50%; display:flex; align-items:center;
@@ -125,55 +149,74 @@ const globalStyles = `
 
   .progress-row {
     display:flex; align-items:center; gap:12px; padding:10px 0;
-    border-bottom:1px solid #1a1a1a; animation:fadeIn 0.2s ease both;
+    border-bottom:1px solid #e2e8f0; animation:fadeIn 0.2s ease both;
   }
   .progress-row:last-child { border-bottom:none; }
 
   .spinner {
-    width:16px; height:16px; border:2px solid #3b82f633;
-    border-top-color:#3b82f6; border-radius:50%; flex-shrink:0;
+    width:16px; height:16px; border:2px solid #bfdbfe;
+    border-top-color:#2563eb; border-radius:50%; flex-shrink:0;
     animation:spin 0.7s linear infinite;
   }
 
+  .opt-pill {
+    background:#ffffff; border:1px solid #dbeafe; border-radius:8px;
+    padding:8px 12px; cursor:pointer; text-align:center;
+    transition:border-color 0.15s, background 0.15s;
+    min-width:72px; font-family:inherit;
+  }
+  .opt-pill:hover { border-color:#93c5fd; }
+  .opt-pill.sel   { border-color:#2563eb; background:#dbeafe; }
+
+  .toggle-switch {
+    width:42px; height:24px; border-radius:12px; border:none; cursor:pointer;
+    position:relative; transition:background 0.2s; flex-shrink:0; padding:0;
+  }
+  .toggle-knob {
+    position:absolute; top:3px; width:18px; height:18px;
+    border-radius:50%; background:#fff; transition:left 0.2s;
+  }
+
   .code-pre {
-    background:#050505; border:1px solid #1a1a1a; border-radius:8px;
+    background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px;
     padding:14px 16px; font-family:'SF Mono','Fira Code','Consolas',monospace;
-    font-size:0.76rem; color:#9ca3af; line-height:1.65; overflow-x:auto;
+    font-size:0.76rem; color:#334155; line-height:1.65; overflow-x:auto;
     white-space:pre;
   }
 
   .nav-link {
-    color:#6b7280; text-decoration:none; font-size:0.85rem;
+    color:#475569; text-decoration:none; font-size:0.85rem;
     padding:5px 10px; border-radius:6px; transition:all 0.15s;
   }
-  .nav-link:hover { color:#e5e7eb; background:#161616; }
-  .nav-link.active { color:#e5e7eb; }
+  .nav-link:hover { color:#1e293b; background:#dbeafe; }
+  .nav-link.active { color:#ffffff; background:#2563eb; font-weight:600; }
 
   .result-url {
-    background:#050505; border:1px solid #1f1f1f; border-radius:8px;
+    background:#f0f9ff; border:1px solid #bfdbfe; border-radius:8px;
     padding:12px 16px; font-family:'SF Mono','Fira Code',monospace;
-    font-size:0.85rem; color:#60a5fa; word-break:break-all;
+    font-size:0.85rem; color:#2563eb; word-break:break-all;
     display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
 
   .copy-btn {
-    background:#1a1a1a; border:1px solid #333; color:#9ca3af;
+    background:#f1f5f9; border:1px solid #cbd5e1; color:#64748b;
     padding:4px 10px; border-radius:5px; font-size:0.73rem; cursor:pointer;
     transition:all 0.15s; flex-shrink:0; font-family:inherit;
   }
-  .copy-btn:hover { background:#222; color:#fff; border-color:#555; }
+  .copy-btn:hover { background:#e2e8f0; color:#1e293b; border-color:#94a3b8; }
 
   .section-card {
-    background:#0a0a0a; border:1px solid #1f1f1f; border-radius:12px;
+    background:#ffffff; border:1px solid #dbeafe; border-radius:12px;
     padding:1.2rem 1.4rem; animation:fadeIn 0.3s ease both;
+    box-shadow:0 1px 6px rgba(37,99,235,0.06);
   }
   .section-label {
-    font-size:0.72rem; color:#6b7280; text-transform:uppercase;
+    font-size:0.72rem; color:#64748b; text-transform:uppercase;
     letter-spacing:0.07em; margin-bottom:6px;
   }
   .review-row {
     display:flex; justify-content:space-between; align-items:flex-start;
-    padding:8px 0; border-bottom:1px solid #141414; gap:16px;
+    padding:8px 0; border-bottom:1px solid #e2e8f0; gap:16px;
   }
   .review-row:last-child { border-bottom:none; }
 `;
@@ -184,13 +227,14 @@ function Nav({ current }) {
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', gap: 4,
-      borderBottom: '1px solid #111', padding: '12px 1rem',
-      marginBottom: '2rem',
+      borderBottom: '1px solid #bfdbfe', padding: '12px 1rem',
+      marginBottom: '2rem', background: '#ffffff',
+      boxShadow: '0 1px 4px rgba(37,99,235,0.08)',
     }}>
-      <Link href="/" className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Dashboard</Link>
-      <span style={{ color: '#333' }}>·</span>
+      <Link href="/" className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Assessment</Link>
+      <span style={{ color: '#cbd5e1' }}>·</span>
       <Link href="/deploy" className={`nav-link ${current === 'deploy' ? 'active' : ''}`}>Deploy</Link>
-      <span style={{ color: '#333' }}>·</span>
+      <span style={{ color: '#cbd5e1' }}>·</span>
       <Link href="/history" className={`nav-link ${current === 'history' ? 'active' : ''}`}>History</Link>
     </nav>
   );
@@ -208,18 +252,18 @@ function StepIndicator({ current }) {
           <div key={n} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 'none' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
               <div className="step-dot" style={{
-                background: done ? '#22c55e' : active ? '#3b82f6' : '#1a1a1a',
-                color: done || active ? '#fff' : '#4b5563',
-                border: `1px solid ${done ? '#22c55e' : active ? '#3b82f6' : '#2a2a2a'}`,
+                background: done ? '#16a34a' : active ? '#2563eb' : '#e2e8f0',
+                color: done || active ? '#fff' : '#94a3b8',
+                border: `1px solid ${done ? '#16a34a' : active ? '#2563eb' : '#cbd5e1'}`,
               }}>
                 {done ? '✓' : n}
               </div>
-              <span style={{ fontSize: '0.7rem', color: active ? '#e5e7eb' : '#4b5563', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '0.7rem', color: active ? '#1e293b' : '#94a3b8', fontWeight: active ? 600 : 400, whiteSpace: 'nowrap' }}>
                 {label}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div style={{ height: 1, flex: 1, background: done ? '#22c55e44' : '#1a1a1a', margin: '0 6px', marginBottom: 16 }} />
+              <div style={{ height: 1, flex: 1, background: done ? '#86efac' : '#e2e8f0', margin: '0 6px', marginBottom: 16 }} />
             )}
           </div>
         );
@@ -232,8 +276,8 @@ function LabelledField({ label, hint, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <label style={{ fontSize: '0.82rem', color: '#9ca3af', fontWeight: 500 }}>{label}</label>
-        {hint && <span style={{ fontSize: '0.72rem', color: '#4b5563' }}>{hint}</span>}
+        <label style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 500 }}>{label}</label>
+        {hint && <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{hint}</span>}
       </div>
       {children}
     </div>
@@ -276,15 +320,14 @@ function ProgressTracker({ steps, currentStepId, error }) {
         const pending = i > currentIdx;
         return (
           <div key={s.id} className="progress-row" style={{ animationDelay: `${i * 40}ms` }}>
-            {done    && <span style={{ color: '#22c55e', fontSize: '1rem', flexShrink: 0, width: 20 }}>✓</span>}
+            {done    && <span style={{ color: '#16a34a', fontSize: '1rem', flexShrink: 0, width: 20 }}>✓</span>}
             {active  && <div className="spinner" />}
-            {errored && <span style={{ color: '#ef4444', fontSize: '1rem', flexShrink: 0, width: 20 }}>✕</span>}
-            {pending && <span style={{ color: '#374151', fontSize: '0.8rem', flexShrink: 0, width: 20 }}>○</span>}
+            {errored && <span style={{ color: '#dc2626', fontSize: '1rem', flexShrink: 0, width: 20 }}>✕</span>}
+            {pending && <span style={{ color: '#cbd5e1', fontSize: '0.8rem', flexShrink: 0, width: 20 }}>○</span>}
             <span style={{
               fontSize: '0.9rem',
-              color: done ? '#9ca3af' : active ? '#e5e7eb' : errored ? '#ef4444' : '#374151',
-              fontWeight: active ? 500 : 400,
-              textDecoration: done ? 'none' : 'none',
+              color: done ? '#94a3b8' : active ? '#1e293b' : errored ? '#dc2626' : '#94a3b8',
+              fontWeight: active ? 600 : 400,
             }}>
               {s.label}
             </span>
@@ -293,9 +336,9 @@ function ProgressTracker({ steps, currentStepId, error }) {
       })}
       {error && (
         <div style={{
-          marginTop: 14, padding: '10px 14px', background: '#450a0a',
-          border: '1px solid #7f1d1d', borderRadius: 8,
-          fontSize: '0.85rem', color: '#fca5a5',
+          marginTop: 14, padding: '10px 14px', background: '#fee2e2',
+          border: '1px solid #fca5a5', borderRadius: 8,
+          fontSize: '0.85rem', color: '#dc2626',
         }}>
           {error}
         </div>
@@ -330,6 +373,12 @@ export default function DeployPage() {
     framework: 'nextjs',
     deployType: 'preview',
     envVars: [{ key: '', value: '' }],
+    nodeVersion: '20.x',
+    region: 'auto',
+    installCmd: '',
+    buildCommand: '',
+    rootDirectory: '',
+    autoDeploy: true,
   });
   const [errors, setErrors] = useState({});
   const [currentStepId, setCurrentStepId] = useState('validate');
@@ -395,12 +444,18 @@ export default function DeployPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectName: form.projectName,
-          repoUrl: form.repoUrl,
-          branch: form.branch,
-          framework: form.framework,
-          deployType: form.deployType,
-          envVars: form.envVars.filter(e => e.key.trim()),
+          projectName:  form.projectName,
+          repoUrl:      form.repoUrl,
+          branch:       form.branch,
+          framework:    form.framework,
+          deployType:   form.deployType,
+          envVars:      form.envVars.filter(e => e.key.trim()),
+          nodeVersion:  form.nodeVersion,
+          region:       form.region,
+          installCmd:   form.installCmd,
+          buildCommand: form.buildCommand,
+          rootDirectory: form.rootDirectory,
+          autoDeploy:   form.autoDeploy,
         }),
       });
 
@@ -430,7 +485,7 @@ export default function DeployPage() {
   return (
     <>
       <style>{globalStyles}</style>
-      <div style={{ fontFamily: "'Inter',system-ui,sans-serif", background: '#000', minHeight: '100vh', color: '#e5e7eb' }}>
+      <div style={{ fontFamily: "'Inter',system-ui,sans-serif", background: '#e8f4fd', minHeight: '100vh', color: '#1e293b' }}>
         <div style={{ maxWidth: 700, margin: '0 auto', padding: '1.5rem 1rem' }}>
           <Nav current="deploy" />
 
@@ -438,12 +493,12 @@ export default function DeployPage() {
           <div style={{ marginBottom: '1.8rem' }}>
             <h1 style={{
               fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em',
-              background: 'linear-gradient(90deg,#fff 30%,#6b7280 100%)',
+              background: 'linear-gradient(90deg,#1e3a5f 30%,#2563eb 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>
               Deploy to Vercel
             </h1>
-            <p style={{ color: '#4b5563', fontSize: '0.82rem', marginTop: 4 }}>
+            <p style={{ color: '#64748b', fontSize: '0.82rem', marginTop: 4 }}>
               Self-service deployment from Bitbucket to Vercel — no DevOps knowledge required.
             </p>
           </div>
@@ -453,7 +508,7 @@ export default function DeployPage() {
           {/* ── Step 1: Source ────────────────────────────────────────────── */}
           {step === 1 && (
             <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Source Repository
               </h2>
 
@@ -496,7 +551,7 @@ export default function DeployPage() {
           {/* ── Step 2: Configuration ─────────────────────────────────────── */}
           {step === 2 && (
             <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
-              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Configuration
               </h2>
 
@@ -511,7 +566,7 @@ export default function DeployPage() {
                       onClick={() => setField('framework', fw.id)}
                     >
                       <span style={{ color: fw.color, fontSize: '1rem' }}>{fw.icon}</span>
-                      <span style={{ fontSize: '0.82rem', color: form.framework === fw.id ? '#e5e7eb' : '#9ca3af' }}>{fw.label}</span>
+                      <span style={{ fontSize: '0.82rem', color: form.framework === fw.id ? '#1e293b' : '#475569', fontWeight: form.framework === fw.id ? 600 : 400 }}>{fw.label}</span>
                     </button>
                   ))}
                 </div>
@@ -533,11 +588,78 @@ export default function DeployPage() {
                     Production
                   </button>
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#374151', marginTop: 4 }}>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 4 }}>
                   {form.deployType === 'preview'
                     ? 'Creates a unique preview URL. Env vars scoped to preview + development.'
                     : 'Deploys to your production domain. Env vars scoped to production only.'}
                 </p>
+              </LabelledField>
+
+              {/* Node.js Version */}
+              <LabelledField label="Node.js Version">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {NODE_VERSIONS.map(nv => (
+                    <button key={nv.id} className={`opt-pill ${form.nodeVersion === nv.id ? 'sel' : ''}`}
+                      onClick={() => setField('nodeVersion', nv.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.nodeVersion === nv.id ? '#2563eb' : '#475569' }}>{nv.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: 2 }}>{nv.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Region */}
+              <LabelledField label="Deploy Region" hint="Fluid Compute auto-routes to nearest">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {REGIONS.map(r => (
+                    <button key={r.id} className={`opt-pill ${form.region === r.id ? 'sel' : ''}`}
+                      onClick={() => setField('region', r.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.region === r.id ? '#2563eb' : '#475569' }}>{r.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: 2 }}>{r.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Install Command */}
+              <LabelledField label="Package Manager" hint="Sets the install command">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {INSTALL_CMDS.map(ic => (
+                    <button key={ic.id} className={`opt-pill ${form.installCmd === ic.id ? 'sel' : ''}`}
+                      onClick={() => setField('installCmd', ic.id)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: form.installCmd === ic.id ? '#2563eb' : '#475569' }}>{ic.label}</div>
+                      <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: 2 }}>{ic.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </LabelledField>
+
+              {/* Build Command override */}
+              <LabelledField label="Build Command" hint="Leave blank to use framework default">
+                <input className="dp-input" placeholder={`e.g. npm run build`}
+                  value={form.buildCommand} onChange={e => setField('buildCommand', e.target.value)} />
+              </LabelledField>
+
+              {/* Root Directory */}
+              <LabelledField label="Root Directory" hint="For monorepos — leave blank for repo root">
+                <input className="dp-input" placeholder="e.g. apps/web"
+                  value={form.rootDirectory} onChange={e => setField('rootDirectory', e.target.value)} />
+              </LabelledField>
+
+              {/* Auto Deploy */}
+              <LabelledField label="Trigger Deployment Immediately">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <button
+                    className="toggle-switch"
+                    style={{ background: form.autoDeploy ? '#2563eb' : '#cbd5e1' }}
+                    onClick={() => setField('autoDeploy', !form.autoDeploy)}
+                  >
+                    <div className="toggle-knob" style={{ left: form.autoDeploy ? 21 : 3 }} />
+                  </button>
+                  <span style={{ fontSize: '0.82rem', color: form.autoDeploy ? '#2563eb' : '#94a3b8' }}>
+                    {form.autoDeploy ? 'Deploy right after project setup' : 'Set up hook only — trigger manually later'}
+                  </span>
+                </div>
               </LabelledField>
 
               {/* Environment Variables */}
@@ -560,28 +682,34 @@ export default function DeployPage() {
           {/* ── Step 3: Review ────────────────────────────────────────────── */}
           {step === 3 && (
             <div className="section-card">
-              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem' }}>
                 Review &amp; Deploy
               </h2>
 
               {[
-                ['Project', form.projectName || '—'],
-                ['Repository', form.repoUrl || '—'],
-                ['Branch', form.branch],
-                ['Framework', selectedFw?.label || form.framework],
-                ['Target', form.deployType === 'production' ? '🟢 Production' : '🔵 Preview'],
+                ['Project',       form.projectName || '—'],
+                ['Repository',    form.repoUrl || '—'],
+                ['Branch',        form.branch],
+                ['Framework',     selectedFw?.label || form.framework],
+                ['Node.js',       form.nodeVersion],
+                ['Region',        REGIONS.find(r => r.id === form.region)?.label || form.region],
+                ['Package Mgr',   INSTALL_CMDS.find(c => c.id === form.installCmd)?.label || 'Auto'],
+                ['Build Cmd',     form.buildCommand || 'Framework default'],
+                ['Root Dir',      form.rootDirectory || '/ (root)'],
+                ['Target',        form.deployType === 'production' ? '🟢 Production' : '🔵 Preview'],
+                ['Auto Deploy',   form.autoDeploy ? '✓ Trigger immediately' : 'Hook only'],
                 ['Env Variables', `${form.envVars.filter(e => e.key.trim()).length} configured`],
               ].map(([k, v]) => (
                 <div className="review-row" key={k}>
-                  <span style={{ fontSize: '0.82rem', color: '#6b7280', whiteSpace: 'nowrap' }}>{k}</span>
-                  <span style={{ fontSize: '0.9rem', color: '#e5e7eb', textAlign: 'right', wordBreak: 'break-all' }}>{v}</span>
+                  <span style={{ fontSize: '0.82rem', color: '#64748b', whiteSpace: 'nowrap' }}>{k}</span>
+                  <span style={{ fontSize: '0.9rem', color: '#1e293b', textAlign: 'right', wordBreak: 'break-all', fontWeight: 500 }}>{v}</span>
                 </div>
               ))}
 
               <div style={{
                 marginTop: 14, padding: '10px 14px',
-                background: '#0c1a2e', border: '1px solid #1e3a5f', borderRadius: 8,
-                fontSize: '0.78rem', color: '#60a5fa',
+                background: '#f0f9ff', border: '1px solid #bfdbfe', borderRadius: 8,
+                fontSize: '0.78rem', color: '#2563eb',
               }}>
                 <strong>Required env vars on this server:</strong> VERCEL_TOKEN (required) ·
                 VERCEL_TEAM_ID (optional) · BITBUCKET_USERNAME &amp; BITBUCKET_APP_PASSWORD (optional — for repo validation)
@@ -599,7 +727,7 @@ export default function DeployPage() {
             <div className="section-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               {!result && (
                 <>
-                  <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                     {deployError ? 'Deployment Failed' : 'Deploying…'}
                   </h2>
                   <ProgressTracker steps={DEPLOY_STEPS} currentStepId={currentStepId} error={deployError} />
@@ -616,8 +744,8 @@ export default function DeployPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ fontSize: '1.8rem' }}>🎉</span>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#22c55e' }}>Deployment Triggered!</div>
-                      <div style={{ fontSize: '0.78rem', color: '#4b5563', marginTop: 2 }}>
+                      <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#16a34a' }}>Deployment Triggered!</div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: 2 }}>
                         Vercel is building your project. It will be live shortly.
                       </div>
                     </div>
@@ -627,7 +755,7 @@ export default function DeployPage() {
                   <div>
                     <p className="section-label">Deployment URL</p>
                     <div className="result-url">
-                      <a href={result.deploymentUrl} target="_blank" rel="noreferrer" style={{ color: '#60a5fa', textDecoration: 'none' }}>
+                      <a href={result.deploymentUrl} target="_blank" rel="noreferrer" style={{ color: '#2563eb', textDecoration: 'none' }}>
                         {result.deploymentUrl}
                       </a>
                       <CopyBtn text={result.deploymentUrl} />
@@ -638,10 +766,10 @@ export default function DeployPage() {
                   {result.hookUrl && (
                     <div>
                       <p className="section-label">Deploy Hook URL</p>
-                      <p style={{ fontSize: '0.75rem', color: '#4b5563', marginBottom: 6 }}>
+                      <p style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: 6 }}>
                         Paste this into Bitbucket Pipelines or trigger it manually to redeploy.
                       </p>
-                      <div className="result-url" style={{ color: '#a78bfa' }}>
+                      <div className="result-url" style={{ color: '#7c3aed' }}>
                         <span style={{ wordBreak: 'break-all', fontSize: '0.78rem' }}>{result.hookUrl}</span>
                         <CopyBtn text={result.hookUrl} />
                       </div>
@@ -667,11 +795,11 @@ export default function DeployPage() {
                       { label: 'Target', value: form.deployType },
                     ].map(({ label, value }) => (
                       <div key={label} style={{
-                        background: '#111', border: '1px solid #1f1f1f', borderRadius: 8,
+                        background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8,
                         padding: '8px 14px', flex: 1, minWidth: 100,
                       }}>
-                        <div style={{ fontSize: '0.7rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#e5e7eb', marginTop: 2 }}>{value}</div>
+                        <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1e293b', marginTop: 2 }}>{value}</div>
                       </div>
                     ))}
                   </div>

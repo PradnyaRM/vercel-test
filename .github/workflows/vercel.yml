@@ -69,6 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint-and-build
     if: github.event_name == 'pull_request'
+    environment: preview
     permissions:
       pull-requests: write
     steps:

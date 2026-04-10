@@ -2,9 +2,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const STATUS_COLOR = {
-  triggered:   { bg: '#0c1a2e', border: '#1e3a5f', text: '#60a5fa',  label: 'Triggered'   },
-  in_progress: { bg: '#1a1200', border: '#3d2e00', text: '#fbbf24',  label: 'In Progress' },
-  error:       { bg: '#450a0a', border: '#7f1d1d', text: '#f87171',  label: 'Failed'      },
+  triggered:   { bg: '#dbeafe', border: '#93c5fd', text: '#2563eb',  label: 'Triggered'   },
+  in_progress: { bg: '#fef9c3', border: '#fde047', text: '#d97706',  label: 'In Progress' },
+  error:       { bg: '#fee2e2', border: '#fca5a5', text: '#dc2626',  label: 'Failed'      },
 };
 
 const FRAMEWORK_ICONS = {
@@ -14,69 +14,70 @@ const FRAMEWORK_ICONS = {
 
 const globalStyles = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #000; }
+  body { background: #e8f4fd; }
 
   @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
   .hist-row {
-    background:#0a0a0a; border:1px solid #1a1a1a; border-radius:10px;
-    padding:1rem 1.2rem; cursor:pointer; transition:border-color 0.15s, background 0.15s;
-    animation:fadeIn 0.25s ease both;
+    background:#ffffff; border:1px solid #dbeafe; border-radius:10px;
+    padding:1rem 1.2rem; cursor:pointer; transition:border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    animation:fadeIn 0.25s ease both; box-shadow:0 1px 4px rgba(37,99,235,0.05);
   }
-  .hist-row:hover { background:#0d0d0d; border-color:#2a2a2a; }
+  .hist-row:hover { background:#f0f7ff; border-color:#93c5fd; box-shadow:0 4px 12px rgba(37,99,235,0.1); }
 
   .hist-detail {
     overflow:hidden; transition:max-height 0.3s ease, opacity 0.3s ease;
   }
 
   .nav-link {
-    color:#6b7280; text-decoration:none; font-size:0.85rem;
+    color:#475569; text-decoration:none; font-size:0.85rem;
     padding:5px 10px; border-radius:6px; transition:all 0.15s;
   }
-  .nav-link:hover  { color:#e5e7eb; background:#161616; }
-  .nav-link.active { color:#e5e7eb; }
+  .nav-link:hover  { color:#1e293b; background:#dbeafe; }
+  .nav-link.active { color:#ffffff; background:#2563eb; font-weight:600; }
 
   .filter-btn {
-    background:transparent; border:1px solid #222; color:#6b7280;
+    background:transparent; border:1px solid #cbd5e1; color:#64748b;
     padding:4px 12px; border-radius:20px; font-size:0.75rem; cursor:pointer;
     transition:all 0.15s; font-family:inherit;
   }
   .filter-btn.active, .filter-btn:hover {
-    background:#1a1a1a; border-color:#444; color:#e5e7eb;
+    background:#2563eb; border-color:#2563eb; color:#fff;
   }
 
   .btn-outline {
-    background:#111; border:1px solid #2a2a2a; color:#9ca3af;
+    background:#f1f5f9; border:1px solid #cbd5e1; color:#475569;
     padding:6px 14px; border-radius:6px; font-size:0.78rem; cursor:pointer;
     transition:all 0.15s; font-family:inherit;
   }
-  .btn-outline:hover { background:#1a1a1a; color:#e5e7eb; border-color:#444; }
+  .btn-outline:hover { background:#e2e8f0; color:#1e293b; border-color:#94a3b8; }
 
   .btn-danger {
-    background:transparent; border:1px solid #7f1d1d; color:#f87171;
+    background:transparent; border:1px solid #fca5a5; color:#dc2626;
     padding:6px 14px; border-radius:6px; font-size:0.78rem; cursor:pointer;
     transition:all 0.15s; font-family:inherit;
   }
-  .btn-danger:hover { background:#450a0a; }
+  .btn-danger:hover { background:#fee2e2; }
 
   .code-pre {
-    background:#050505; border:1px solid #1a1a1a; border-radius:8px;
+    background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px;
     padding:12px 14px; font-family:'SF Mono','Fira Code','Consolas',monospace;
-    font-size:0.74rem; color:#9ca3af; line-height:1.6; overflow-x:auto;
+    font-size:0.74rem; color:#334155; line-height:1.6; overflow-x:auto;
     white-space:pre; margin-top:6px;
   }
 
   .copy-btn {
-    background:#1a1a1a; border:1px solid #333; color:#9ca3af;
+    background:#f1f5f9; border:1px solid #cbd5e1; color:#64748b;
     padding:3px 9px; border-radius:5px; font-size:0.72rem; cursor:pointer;
     transition:all 0.15s; font-family:inherit;
   }
-  .copy-btn:hover { background:#222; color:#fff; border-color:#555; }
+  .copy-btn:hover { background:#e2e8f0; color:#1e293b; border-color:#94a3b8; }
 
   .deploy-btn {
-    background:linear-gradient(135deg,#1d4ed8,#6d28d9); border:none; color:#fff;
+    background:linear-gradient(135deg,#2563eb,#7c3aed); border:none; color:#fff;
     padding:10px 22px; border-radius:8px; font-size:0.85rem; font-weight:600;
     cursor:pointer; transition:opacity 0.15s, transform 0.15s; font-family:inherit;
+    box-shadow:0 4px 14px rgba(37,99,235,0.3);
   }
   .deploy-btn:hover { opacity:0.9; transform:translateY(-1px); }
 `;
@@ -85,12 +86,13 @@ function Nav({ current }) {
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', gap: 4,
-      borderBottom: '1px solid #111', padding: '12px 1rem', marginBottom: '2rem',
+      borderBottom: '1px solid #bfdbfe', padding: '12px 1rem', marginBottom: '2rem',
+      background: '#ffffff', boxShadow: '0 1px 4px rgba(37,99,235,0.08)',
     }}>
-      <Link href="/"        className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Dashboard</Link>
-      <span style={{ color: '#333' }}>·</span>
+      <Link href="/"        className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Assessment</Link>
+      <span style={{ color: '#cbd5e1' }}>·</span>
       <Link href="/deploy"  className={`nav-link ${current === 'deploy'    ? 'active' : ''}`}>Deploy</Link>
-      <span style={{ color: '#333' }}>·</span>
+      <span style={{ color: '#cbd5e1' }}>·</span>
       <Link href="/history" className={`nav-link ${current === 'history'   ? 'active' : ''}`}>History</Link>
     </nav>
   );
@@ -137,20 +139,20 @@ function HistoryRow({ dep, index }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
           <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{FRAMEWORK_ICONS[dep.framework] || '◻'}</span>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#e5e7eb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {dep.originalName || dep.projectName}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: 1 }}>
-              {dep.bbWorkspace}/{dep.bbSlug} &nbsp;·&nbsp; <span style={{ color: '#6b7280' }}>{dep.branch}</span>
+            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>
+              {dep.bbWorkspace}/{dep.bbSlug} &nbsp;·&nbsp; <span style={{ color: '#64748b' }}>{dep.branch}</span>
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <StatusBadge status={dep.status} />
-          <span style={{ fontSize: '0.72rem', color: '#374151', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '0.72rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
             {new Date(dep.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
           </span>
-          <span style={{ color: '#374151', fontSize: '0.75rem' }}>{open ? '▲' : '▼'}</span>
+          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{open ? '▲' : '▼'}</span>
         </div>
       </div>
 
@@ -168,11 +170,11 @@ function HistoryRow({ dep, index }) {
               { label: 'Project ID',  value: dep.vercelProjectId || '—' },
             ].map(({ label, value }) => (
               <div key={label} style={{
-                background: '#111', border: '1px solid #1f1f1f', borderRadius: 8,
+                background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8,
                 padding: '7px 12px', flex: 1, minWidth: 100,
               }}>
-                <div style={{ fontSize: '0.68rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#9ca3af', marginTop: 2 }}>{value}</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginTop: 2 }}>{value}</div>
               </div>
             ))}
           </div>
@@ -180,10 +182,10 @@ function HistoryRow({ dep, index }) {
           {/* Deployment URL */}
           {dep.deploymentUrl && (
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Deployment URL</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#050505', border: '1px solid #1a1a1a', borderRadius: 8, padding: '8px 12px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Deployment URL</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f0f9ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '8px 12px' }}>
                 <a href={dep.deploymentUrl} target="_blank" rel="noreferrer"
-                  style={{ color: '#60a5fa', fontSize: '0.82rem', textDecoration: 'none', flex: 1 }}>
+                  style={{ color: '#2563eb', fontSize: '0.82rem', textDecoration: 'none', flex: 1 }}>
                   {dep.deploymentUrl}
                 </a>
                 <CopyBtn text={dep.deploymentUrl} />
@@ -195,10 +197,10 @@ function HistoryRow({ dep, index }) {
           {dep.hookUrl && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontSize: '0.72rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Deploy Hook URL</span>
+                <span style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Deploy Hook URL</span>
                 <CopyBtn text={dep.hookUrl} />
               </div>
-              <div style={{ background: '#050505', border: '1px solid #1a1a1a', borderRadius: 8, padding: '8px 12px', fontSize: '0.75rem', color: '#a78bfa', wordBreak: 'break-all', fontFamily: 'monospace' }}>
+              <div style={{ background: '#f5f0ff', border: '1px solid #ddd6fe', borderRadius: 8, padding: '8px 12px', fontSize: '0.75rem', color: '#7c3aed', wordBreak: 'break-all', fontFamily: 'monospace' }}>
                 {dep.hookUrl}
               </div>
             </div>
@@ -208,7 +210,7 @@ function HistoryRow({ dep, index }) {
           {pipelineYaml && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontSize: '0.72rem', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.05em' }}>bitbucket-pipelines.yml</span>
+                <span style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>bitbucket-pipelines.yml</span>
                 <CopyBtn text={pipelineYaml} />
               </div>
               <pre className="code-pre">{pipelineYaml}</pre>
@@ -217,7 +219,7 @@ function HistoryRow({ dep, index }) {
 
           {/* Error */}
           {dep.error && (
-            <div style={{ padding: '8px 12px', background: '#450a0a', border: '1px solid #7f1d1d', borderRadius: 8, fontSize: '0.82rem', color: '#fca5a5' }}>
+            <div style={{ padding: '8px 12px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: 8, fontSize: '0.82rem', color: '#dc2626' }}>
               {dep.error}
             </div>
           )}
@@ -258,7 +260,7 @@ export default function HistoryPage({ deployments: initial }) {
   return (
     <>
       <style>{globalStyles}</style>
-      <div style={{ fontFamily: "'Inter',system-ui,sans-serif", background: '#000', minHeight: '100vh', color: '#e5e7eb' }}>
+      <div style={{ fontFamily: "'Inter',system-ui,sans-serif", background: '#e8f4fd', minHeight: '100vh', color: '#1e293b' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '1.5rem 1rem' }}>
           <Nav current="history" />
 
@@ -267,12 +269,12 @@ export default function HistoryPage({ deployments: initial }) {
             <div>
               <h1 style={{
                 fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em',
-                background: 'linear-gradient(90deg,#fff 30%,#6b7280 100%)',
+                background: 'linear-gradient(90deg,#1e3a5f 30%,#2563eb 100%)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }}>
                 Deployment History
               </h1>
-              <p style={{ color: '#4b5563', fontSize: '0.82rem', marginTop: 4 }}>
+              <p style={{ color: '#64748b', fontSize: '0.82rem', marginTop: 4 }}>
                 {deployments.length} total deployment{deployments.length !== 1 ? 's' : ''} · stored in-memory
               </p>
             </div>
@@ -310,11 +312,11 @@ export default function HistoryPage({ deployments: initial }) {
           {/* List */}
           {filtered.length === 0 ? (
             <div style={{
-              background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 12,
-              padding: '3rem', textAlign: 'center',
+              background: '#ffffff', border: '1px solid #dbeafe', borderRadius: 12,
+              padding: '3rem', textAlign: 'center', boxShadow: '0 1px 6px rgba(37,99,235,0.06)',
             }}>
               <div style={{ fontSize: '2rem', marginBottom: 12 }}>📭</div>
-              <div style={{ color: '#4b5563', fontSize: '0.9rem' }}>
+              <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
                 {deployments.length === 0
                   ? 'No deployments yet. Start your first deployment!'
                   : 'No deployments match this filter.'}
@@ -335,10 +337,10 @@ export default function HistoryPage({ deployments: initial }) {
 
           {/* Setup guide */}
           <div style={{
-            background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 12,
-            padding: '1rem 1.2rem', marginTop: '2rem',
+            background: '#ffffff', border: '1px solid #dbeafe', borderRadius: 12,
+            padding: '1rem 1.2rem', marginTop: '2rem', boxShadow: '0 1px 6px rgba(37,99,235,0.06)',
           }}>
-            <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>
               Required Secrets
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -349,20 +351,20 @@ export default function HistoryPage({ deployments: initial }) {
                 { key: 'BITBUCKET_APP_PASSWORD', req: false, desc: 'Bitbucket app password (not account password)' },
               ].map(({ key, req, desc }) => (
                 <div key={key} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                  <span style={{ fontSize: '0.7rem', marginTop: 3, flexShrink: 0, color: req ? '#f59e0b' : '#4b5563' }}>
+                  <span style={{ fontSize: '0.7rem', marginTop: 3, flexShrink: 0, color: req ? '#d97706' : '#94a3b8' }}>
                     {req ? '●' : '○'}
                   </span>
                   <div>
-                    <code style={{ fontSize: '0.8rem', color: '#a78bfa', background: '#111', padding: '1px 5px', borderRadius: 4 }}>
+                    <code style={{ fontSize: '0.8rem', color: '#7c3aed', background: '#f5f0ff', padding: '1px 5px', borderRadius: 4 }}>
                       {key}
                     </code>
-                    <span style={{ fontSize: '0.75rem', color: '#4b5563', marginLeft: 8 }}>{desc}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', marginLeft: 8 }}>{desc}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <p style={{ fontSize: '0.72rem', color: '#374151', marginTop: 10 }}>
-              ● Required &nbsp; ○ Optional — Add these via <code style={{ color: '#9ca3af' }}>vercel env add</code> or the Vercel project dashboard.
+            <p style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 10 }}>
+              ● Required &nbsp; ○ Optional — Add these via <code style={{ color: '#64748b' }}>vercel env add</code> or the Vercel project dashboard.
             </p>
           </div>
         </div>
