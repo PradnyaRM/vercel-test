@@ -49,7 +49,7 @@ const SUPPORT_DETAILS = [
 
 const globalStyles = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #000; }
+  body { background: #e8f4fd; }
 
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
@@ -76,15 +76,15 @@ const globalStyles = `
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.15s ease;
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 1px solid #e2e8f0;
     animation: fadeIn 0.3s ease both;
   }
   .service-row:last-child { border-bottom: none; }
-  .service-row:hover { background: #161616; }
+  .service-row:hover { background: #eff6ff; }
 
   .metric-card {
-    background: #111;
-    border: 1px solid #222;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
     border-radius: 12px;
     padding: 1.2rem 1.5rem;
     flex: 1;
@@ -95,13 +95,13 @@ const globalStyles = `
   }
   .metric-card:hover {
     transform: translateY(-3px);
-    border-color: #333;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    border-color: #93c5fd;
+    box-shadow: 0 8px 24px rgba(37,99,235,0.12);
   }
 
   .incident-row {
     padding: 12px 0;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid #e2e8f0;
     cursor: pointer;
     transition: background 0.15s;
     border-radius: 6px;
@@ -109,7 +109,7 @@ const globalStyles = `
     padding-right: 8px;
   }
   .incident-row:last-child { border-bottom: none; }
-  .incident-row:hover { background: #161616; }
+  .incident-row:hover { background: #eff6ff; }
 
   .expand-detail {
     overflow: hidden;
@@ -117,9 +117,9 @@ const globalStyles = `
   }
 
   .refresh-btn {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #aaa;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
     padding: 6px 14px;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -127,15 +127,15 @@ const globalStyles = `
     transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
   .refresh-btn:hover {
-    background: #222;
-    color: #fff;
-    border-color: #555;
+    background: #e2e8f0;
+    color: #1e293b;
+    border-color: #94a3b8;
   }
 
   .filter-btn {
     background: transparent;
-    border: 1px solid #333;
-    color: #888;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -143,14 +143,14 @@ const globalStyles = `
     transition: all 0.15s;
   }
   .filter-btn.active, .filter-btn:hover {
-    background: #222;
-    border-color: #555;
+    background: #2563eb;
+    border-color: #2563eb;
     color: #fff;
   }
 
   .deploy-req-card {
-    background: #111;
-    border: 1px solid #1f1f1f;
+    background: #f8fbff;
+    border: 1px solid #dbeafe;
     border-radius: 10px;
     padding: 0.85rem 1rem;
     flex: 1;
@@ -159,9 +159,9 @@ const globalStyles = `
     animation: fadeIn 0.3s ease both;
   }
   .deploy-req-card:hover {
-    border-color: #333;
+    border-color: #93c5fd;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 20px rgba(37,99,235,0.1);
   }
 
   .feature-row {
@@ -171,11 +171,11 @@ const globalStyles = `
     padding: 10px 8px;
     border-radius: 8px;
     transition: background 0.15s;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid #e2e8f0;
     cursor: default;
   }
   .feature-row:last-child { border-bottom: none; }
-  .feature-row:hover { background: #141414; }
+  .feature-row:hover { background: #eff6ff; }
 
   .support-row {
     display: grid;
@@ -183,16 +183,16 @@ const globalStyles = `
     gap: 8px 16px;
     padding: 10px 8px;
     border-radius: 8px;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid #e2e8f0;
     transition: background 0.15s;
   }
   .support-row:last-child { border-bottom: none; }
-  .support-row:hover { background: #141414; }
+  .support-row:hover { background: #eff6ff; }
 
   .section-tab {
     background: transparent;
-    border: 1px solid #222;
-    color: #6b7280;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
     padding: 5px 14px;
     border-radius: 6px;
     font-size: 0.78rem;
@@ -201,11 +201,11 @@ const globalStyles = `
     letter-spacing: 0.03em;
   }
   .section-tab.active {
-    background: #1a1a1a;
-    border-color: #444;
-    color: #e5e7eb;
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
   }
-  .section-tab:hover { border-color: #333; color: #ccc; }
+  .section-tab:hover { border-color: #93c5fd; color: #2563eb; }
 `;
 
 function PulseDot({ status }) {
@@ -249,26 +249,26 @@ function ServiceRow({ name, status, uptime, latency, index }) {
       onClick={() => setExpanded(e => !e)}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 500, color: '#e5e7eb', fontSize: '0.95rem' }}>{name}</div>
+        <div style={{ fontWeight: 500, color: '#1e293b', fontSize: '0.95rem' }}>{name}</div>
         <div
           className="expand-detail"
           style={{ maxHeight: expanded ? 40 : 0, opacity: expanded ? 1 : 0 }}
         >
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', marginTop: 4 }}>
-            Uptime: <span style={{ color: '#22c55e' }}>{uptime}%</span>
+          <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: 4 }}>
+            Uptime: <span style={{ color: '#16a34a' }}>{uptime}%</span>
             &nbsp;·&nbsp;
-            Latency: <span style={{ color: latency > 200 ? '#f59e0b' : '#60a5fa' }}>{latency}ms</span>
+            Latency: <span style={{ color: latency > 200 ? '#d97706' : '#2563eb' }}>{latency}ms</span>
           </div>
         </div>
         {!expanded && (
-          <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: 2 }}>
+          <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>
             Click to expand
           </div>
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <StatusBadge status={status} />
-        <span style={{ color: '#4b5563', fontSize: '0.8rem' }}>{expanded ? '▲' : '▼'}</span>
+        <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{expanded ? '▲' : '▼'}</span>
       </div>
     </div>
   );
@@ -292,10 +292,10 @@ function MetricCard({ label, value, unit, color, index }) {
 
   return (
     <div className="metric-card" style={{ animationDelay: `${index * 80}ms` }}>
-      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+      <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
       <div style={{ fontSize: '1.9rem', fontWeight: 700, color: color }}>
         {count}
-        <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#6b7280' }}> {unit}</span>
+        <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#94a3b8' }}> {unit}</span>
       </div>
     </div>
   );
@@ -303,7 +303,7 @@ function MetricCard({ label, value, unit, color, index }) {
 
 function CountdownBar({ seconds, total }) {
   return (
-    <div style={{ height: 2, background: '#1a1a1a', borderRadius: 2, overflow: 'hidden', marginTop: 6 }}>
+    <div style={{ height: 2, background: '#dbeafe', borderRadius: 2, overflow: 'hidden', marginTop: 6 }}>
       <div style={{
         height: '100%',
         background: '#3b82f6',
@@ -342,9 +342,9 @@ export default function StatusPage({ services: initialServices, incidents, metri
   const overallStatus = hasOutage ? 'outage' : allOperational ? 'operational' : 'degraded';
 
   const overallGradient = {
-    operational: 'linear-gradient(135deg, #052e16 0%, #0a0a0a 100%)',
-    degraded:    'linear-gradient(135deg, #451a03 0%, #0a0a0a 100%)',
-    outage:      'linear-gradient(135deg, #450a0a 0%, #0a0a0a 100%)',
+    operational: 'linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%)',
+    degraded:    'linear-gradient(135deg, #fef9c3 0%, #fffbeb 100%)',
+    outage:      'linear-gradient(135deg, #fee2e2 0%, #fff5f5 100%)',
   }[overallStatus];
 
   const filtered = filter === 'all'
@@ -360,14 +360,14 @@ export default function StatusPage({ services: initialServices, incidents, metri
   return (
     <>
       <style>{globalStyles}</style>
-      <div style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#000', minHeight: '100vh', color: '#e5e7eb' }}>
+      <div style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#e8f4fd', minHeight: '100vh', color: '#1e293b' }}>
         {/* Nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 4, borderBottom: '1px solid #111', padding: '12px 1rem' }}>
-          <Link href="/"        style={{ color: '#e5e7eb', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, background: '#1a1a1a' }}>Dashboard</Link>
-          <span style={{ color: '#333' }}>·</span>
-          <Link href="/deploy"  style={{ color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>Deploy</Link>
-          <span style={{ color: '#333' }}>·</span>
-          <Link href="/history" style={{ color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>History</Link>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 4, borderBottom: '1px solid #bfdbfe', padding: '12px 1rem', background: '#ffffff', boxShadow: '0 1px 4px rgba(37,99,235,0.08)' }}>
+          <Link href="/"        style={{ color: '#ffffff', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, background: '#2563eb', fontWeight: 600 }}>Dashboard</Link>
+          <span style={{ color: '#cbd5e1' }}>·</span>
+          <Link href="/deploy"  style={{ color: '#475569', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>Deploy</Link>
+          <span style={{ color: '#cbd5e1' }}>·</span>
+          <Link href="/history" style={{ color: '#475569', textDecoration: 'none', fontSize: '0.85rem', padding: '5px 10px', borderRadius: 6, transition: 'color 0.15s' }}>History</Link>
         </nav>
         <div style={{ maxWidth: 780, margin: '0 auto', padding: '2rem 1rem' }}>
 
@@ -384,22 +384,22 @@ export default function StatusPage({ services: initialServices, incidents, metri
                 <div>
                   <h1 style={{
                     fontSize: '1.7rem', fontWeight: 800, letterSpacing: '-0.02em',
-                    background: 'linear-gradient(90deg, #fff 30%, #6b7280 100%)',
+                    background: 'linear-gradient(90deg, #1e3a5f 30%, #2563eb 100%)',
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                     lineHeight: 1.1,
                   }}>Pivotree</h1>
-                  <div style={{ fontSize: '0.72rem', color: '#3b82f6', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
+                  <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
                     Automatic App Deployment
                   </div>
                 </div>
               </div>
-              <p style={{ color: '#4b5563', marginTop: 6, fontSize: '0.82rem' }}>
-                Real-time system health &nbsp;·&nbsp; Last updated: <span style={{ color: '#9ca3af' }}>{time}</span>
+              <p style={{ color: '#64748b', marginTop: 6, fontSize: '0.82rem' }}>
+                Real-time system health &nbsp;·&nbsp; Last updated: <span style={{ color: '#1e293b', fontWeight: 500 }}>{time}</span>
               </p>
               <CountdownBar seconds={countdown} total={REFRESH_INTERVAL} />
             </div>
             <button className="refresh-btn" onClick={() => { setTime(new Date().toLocaleTimeString()); setCountdown(REFRESH_INTERVAL); setRefreshKey(k => k + 1); }}>
-              ↻ Refresh &nbsp;<span style={{ color: '#555' }}>{countdown}s</span>
+              ↻ Refresh &nbsp;<span style={{ color: '#94a3b8' }}>{countdown}s</span>
             </button>
           </div>
 
@@ -420,7 +420,7 @@ export default function StatusPage({ services: initialServices, incidents, metri
               <div style={{ fontWeight: 700, fontSize: '1.05rem', color: STATUS_COLORS[overallStatus] }}>
                 {overallStatus === 'operational' ? 'All Systems Operational' : overallStatus === 'degraded' ? 'Partial Degradation' : 'Active Outage'}
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 2 }}>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 2 }}>
                 {counts.operational} operational &nbsp;·&nbsp; {counts.degraded} degraded &nbsp;·&nbsp; {counts.outage} outage
               </div>
             </div>
@@ -429,16 +429,16 @@ export default function StatusPage({ services: initialServices, incidents, metri
 
           {/* Metrics */}
           <div key={`metrics-${refreshKey}`} style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <MetricCard index={0} label="Avg Uptime (30d)" value={metrics.avgUptime} unit="%" color="#22c55e" />
-            <MetricCard index={1} label="Avg Latency"      value={metrics.avgLatency} unit="ms" color="#3b82f6" />
-            <MetricCard index={2} label="Incidents (30d)"  value={metrics.incidents}  unit="total" color="#f59e0b" />
-            <MetricCard index={3} label="MTTR"             value={metrics.mttr}       unit="min" color="#a78bfa" />
+            <MetricCard index={0} label="Avg Uptime (30d)" value={metrics.avgUptime} unit="%" color="#16a34a" />
+            <MetricCard index={1} label="Avg Latency"      value={metrics.avgLatency} unit="ms" color="#2563eb" />
+            <MetricCard index={2} label="Incidents (30d)"  value={metrics.incidents}  unit="total" color="#d97706" />
+            <MetricCard index={3} label="MTTR"             value={metrics.mttr}       unit="min" color="#7c3aed" />
           </div>
 
           {/* Services */}
-          <div style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12, padding: '1rem 1.2rem', marginBottom: '1.5rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: 12, padding: '1rem 1.2rem', marginBottom: '1.5rem', boxShadow: '0 1px 6px rgba(37,99,235,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: 8 }}>
-              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Services</h2>
+              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Services</h2>
               <div style={{ display: 'flex', gap: 6 }}>
                 {['all', 'operational', 'degraded', 'outage'].map(f => (
                   <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
@@ -448,28 +448,28 @@ export default function StatusPage({ services: initialServices, incidents, metri
               </div>
             </div>
             {filtered.length === 0
-              ? <p style={{ color: '#4b5563', fontSize: '0.9rem', padding: '8px 12px' }}>No services match this filter.</p>
+              ? <p style={{ color: '#64748b', fontSize: '0.9rem', padding: '8px 12px' }}>No services match this filter.</p>
               : filtered.map((s, i) => <ServiceRow key={s.name} {...s} index={i} />)
             }
           </div>
 
           {/* Incidents */}
-          <div style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12, padding: '1rem 1.2rem' }}>
-            <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>Recent Incidents</h2>
+          <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: 12, padding: '1rem 1.2rem', boxShadow: '0 1px 6px rgba(37,99,235,0.06)' }}>
+            <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>Recent Incidents</h2>
             {incidents.length === 0
-              ? <p style={{ color: '#4b5563', fontSize: '0.9rem' }}>No incidents in the last 30 days.</p>
+              ? <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No incidents in the last 30 days.</p>
               : incidents.map((inc, i) => <IncidentRow key={i} incident={inc} index={i} total={incidents.length} />)
             }
           </div>
 
           {/* Deployment Info */}
-          <div style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12, padding: '1rem 1.2rem', marginTop: '1.5rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: 12, padding: '1rem 1.2rem', marginTop: '1.5rem', boxShadow: '0 1px 6px rgba(37,99,235,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
               <div>
-                <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                <h2 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   Vercel Deployment
                 </h2>
-                <p style={{ fontSize: '0.75rem', color: '#374151', marginTop: 2 }}>Requirements, features &amp; support details</p>
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>Requirements, features &amp; support details</p>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
                 {['requirements', 'features', 'support'].map(tab => (
@@ -485,9 +485,9 @@ export default function StatusPage({ services: initialServices, incidents, metri
                 {DEPLOY_REQUIREMENTS.map((r, i) => (
                   <div key={r.label} className="deploy-req-card" style={{ animationDelay: `${i * 50}ms` }}>
                     <div style={{ fontSize: '1.1rem', marginBottom: 6 }}>{r.icon}</div>
-                    <div style={{ fontSize: '0.72rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>{r.label}</div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#e5e7eb' }}>{r.value}</div>
-                    <div style={{ fontSize: '0.72rem', color: '#4b5563', marginTop: 2 }}>{r.note}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>{r.label}</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1e293b' }}>{r.value}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>{r.note}</div>
                   </div>
                 ))}
               </div>
@@ -501,8 +501,8 @@ export default function StatusPage({ services: initialServices, incidents, metri
                       {f.supported ? '✅' : '🚫'}
                     </span>
                     <div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 500, color: f.supported ? '#e5e7eb' : '#6b7280' }}>{f.label}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: 2 }}>{f.desc}</div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 500, color: f.supported ? '#1e293b' : '#94a3b8' }}>{f.label}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>{f.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -513,10 +513,10 @@ export default function StatusPage({ services: initialServices, incidents, metri
               <div>
                 {SUPPORT_DETAILS.map((s, i) => (
                   <div key={s.label} className="support-row" style={{ animationDelay: `${i * 40}ms` }}>
-                    <div style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.04em', paddingTop: 2 }}>{s.label}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', paddingTop: 2 }}>{s.label}</div>
                     <div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#e5e7eb' }}>{s.value}</div>
-                      <div style={{ fontSize: '0.74rem', color: '#4b5563', marginTop: 2 }}>{s.sub}</div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1e293b' }}>{s.value}</div>
+                      <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: 2 }}>{s.sub}</div>
                     </div>
                   </div>
                 ))}
@@ -524,7 +524,7 @@ export default function StatusPage({ services: initialServices, incidents, metri
             )}
           </div>
 
-          <p style={{ textAlign: 'center', color: '#374151', fontSize: '0.75rem', marginTop: '2rem' }}>
+          <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.75rem', marginTop: '2rem' }}>
             Pivotree &nbsp;·&nbsp; Powered by Vercel
           </p>
         </div>
@@ -542,28 +542,28 @@ function IncidentRow({ incident: inc, index: i, total }) {
       onClick={() => setOpen(o => !o)}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ fontWeight: 500, fontSize: '0.9rem', color: '#d1d5db' }}>{inc.title}</div>
+        <div style={{ fontWeight: 500, fontSize: '0.9rem', color: '#1e293b' }}>{inc.title}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
             fontSize: '0.72rem',
-            background: inc.resolved ? '#052e16' : '#450a0a',
-            color: inc.resolved ? '#22c55e' : '#f87171',
-            border: `1px solid ${inc.resolved ? '#14532d' : '#7f1d1d'}`,
+            background: inc.resolved ? '#dcfce7' : '#fee2e2',
+            color: inc.resolved ? '#16a34a' : '#dc2626',
+            border: `1px solid ${inc.resolved ? '#86efac' : '#fca5a5'}`,
             padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap',
           }}>
             {inc.resolved ? 'Resolved' : 'Ongoing'}
           </span>
-          <span style={{ color: '#4b5563', fontSize: '0.75rem' }}>{open ? '▲' : '▼'}</span>
+          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{open ? '▲' : '▼'}</span>
         </div>
       </div>
       <div
         className="expand-detail"
         style={{ maxHeight: open ? 60 : 0, opacity: open ? 1 : 0 }}
       >
-        <div style={{ fontSize: '0.78rem', color: '#6b7280', marginTop: 6, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: 6, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <span>📅 {inc.date}</span>
-          <span>⏱ Duration: <span style={{ color: '#9ca3af' }}>{inc.duration}</span></span>
-          <span>🔧 Affected: <span style={{ color: '#9ca3af' }}>{inc.affected}</span></span>
+          <span>⏱ Duration: <span style={{ color: '#475569' }}>{inc.duration}</span></span>
+          <span>🔧 Affected: <span style={{ color: '#475569' }}>{inc.affected}</span></span>
         </div>
       </div>
     </div>
