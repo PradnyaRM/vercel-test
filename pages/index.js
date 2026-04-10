@@ -363,7 +363,7 @@ export default function AssessmentPage() {
                 ))}
                 <div style={{ marginTop: '1rem', padding: '10px 14px', background: '#f0f9ff', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: '0.78rem', color: '#2563eb' }}>
                   <strong>Observation:</strong> Deployment speed is a significant advantage over traditional CI/CD pipelines.
-                  Vercel's build cache reduces repeat deploy times by 40–60%. Rollback is essentially instant.
+                  Vercel&apos;s build cache reduces repeat deploy times by 40–60%. Rollback is essentially instant.
                 </div>
               </div>
             )}
