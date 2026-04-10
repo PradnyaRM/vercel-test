@@ -195,8 +195,47 @@ const globalStyles = `
   .cost-card.pro { background:#f0f7ff; border-color:#93c5fd; }
 `;
 
+const PLAN = {
+  name: 'Hobby',
+  label: 'Free',
+  users: '1 (Personal)',
+  bandwidthTotal: 100,
+  bandwidthUsed: 45,
+  resetDate: 'May 1, 2026',
+  excluded: [
+    { icon: '👥', text: 'No team collaboration' },
+    { icon: '🔐', text: 'No SSO (Single Sign-On)' },
+    { icon: '🔒', text: 'No password protection' },
+  ],
+};
+
+function BandwidthBar({ used, total }) {
+  const pct = Math.min((used / total) * 100, 100);
+  const color = pct < 70 ? '#16a34a' : pct < 90 ? '#d97706' : '#dc2626';
+  const bgTrack = pct < 70 ? '#dcfce7' : pct < 90 ? '#fef9c3' : '#fee2e2';
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#475569', marginBottom: 6 }}>
+        <span style={{ fontWeight: 600, color }}>{used} GB used</span>
+        <span>{total} GB total</span>
+      </div>
+      <div style={{ height: 10, background: bgTrack, borderRadius: 999, overflow: 'hidden', border: `1px solid ${color}33` }}>
+        <div style={{
+          height: '100%', width: `${pct}%`, background: color,
+          borderRadius: 999, transition: 'width 0.6s ease',
+        }} />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#94a3b8', marginTop: 4 }}>
+        <span>{pct.toFixed(0)}% of monthly limit used</span>
+        <span>{total - used} GB remaining</span>
+      </div>
+    </div>
+  );
+}
+
 export default function AssessmentPage() {
   const [tab, setTab] = useState('steps');
+  const [tipVisible, setTipVisible] = useState(false);
 
   return (
     <>
@@ -394,6 +433,148 @@ export default function AssessmentPage() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Plan Usage */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            {/* Header row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: '1.05rem' }}>📊</span>
+                <h2 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1e293b', letterSpacing: '0.02em' }}>Plan Usage &amp; Billing</h2>
+              </div>
+              <button
+                onClick={() => {}}
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb, #7c3aed)', color: '#fff',
+                  border: 'none', borderRadius: 8, padding: '6px 16px',
+                  fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(37,99,235,0.25)', transition: 'opacity 0.15s',
+                }}
+                onMouseOver={e => e.currentTarget.style.opacity = '0.88'}
+                onMouseOut={e => e.currentTarget.style.opacity = '1'}
+              >
+                ↑ Upgrade Plan
+              </button>
+            </div>
+
+            {/* Plan info chips */}
+            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '6px 12px' }}>
+                <span style={{ fontSize: '0.85rem' }}>🏷️</span>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Plan</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>{PLAN.name} <span style={{ color: '#16a34a', fontWeight: 600 }}>({PLAN.label})</span></div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '6px 12px' }}>
+                <span style={{ fontSize: '0.85rem' }}>👤</span>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Users</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>{PLAN.users}</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '6px 12px', position: 'relative' }}>
+                <span style={{ fontSize: '0.85rem' }}>📦</span>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Bandwidth</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>100 GB / month</span>
+                    <span
+                      onMouseEnter={() => setTipVisible(true)}
+                      onMouseLeave={() => setTipVisible(false)}
+                      style={{
+                        width: 16, height: 16, borderRadius: '50%', background: '#dbeafe',
+                        border: '1px solid #93c5fd', color: '#2563eb', fontSize: '0.6rem',
+                        fontWeight: 700, cursor: 'default', display: 'inline-flex',
+                        alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      }}
+                    >?</span>
+                  </div>
+                </div>
+                {tipVisible && (
+                  <div style={{
+                    position: 'absolute', bottom: 'calc(100% + 8px)', left: 0,
+                    width: 260, background: '#1e293b', color: '#f1f5f9',
+                    fontSize: '0.72rem', lineHeight: 1.55, borderRadius: 8,
+                    padding: '10px 12px', boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                    zIndex: 50, pointerEvents: 'none',
+                  }}>
+                    Bandwidth refers to the total amount of data transferred from your app to users.
+                    This includes page loads, API responses, images, and other assets.
+                    <span style={{
+                      position: 'absolute', bottom: -6, left: 18,
+                      width: 12, height: 12, background: '#1e293b',
+                      transform: 'rotate(45deg)', borderRadius: 2,
+                    }} />
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f7ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '6px 12px' }}>
+                <span style={{ fontSize: '0.85rem' }}>🔄</span>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Resets on</div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>{PLAN.resetDate}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Warning banner */}
+            {(PLAN.bandwidthUsed / PLAN.bandwidthTotal) > 0.8 && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem',
+                background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 8, padding: '10px 14px',
+              }}>
+                <span style={{ fontSize: '1rem', flexShrink: 0 }}>⚠️</span>
+                <span style={{ fontSize: '0.8rem', color: '#9a3412', fontWeight: 500 }}>
+                  You are nearing your monthly bandwidth limit. Consider upgrading to the Pro plan to avoid service interruption.
+                </span>
+              </div>
+            )}
+
+            {/* Progress bar */}
+            <div style={{ marginBottom: '1.2rem' }}>
+              <BandwidthBar used={PLAN.bandwidthUsed} total={PLAN.bandwidthTotal} />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {/* Features not included */}
+              <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 10, padding: '0.9rem 1rem' }}>
+                <div style={{ fontSize: '0.72rem', color: '#ea580c', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.6rem' }}>
+                  Not Included
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                  {PLAN.excluded.map(f => (
+                    <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: '0.8rem', color: '#7c2d12' }}>
+                      <span style={{ fontSize: '0.85rem' }}>{f.icon}</span>
+                      <span>{f.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* What does 100 GB mean */}
+              <div style={{ background: '#f0f9ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '0.9rem 1rem' }}>
+                <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.6rem' }}>
+                  What does 100 GB mean?
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                  {[
+                    { icon: '🌐', text: '~100,000 page visits', sub: 'at 1 MB / page' },
+                    { icon: '⚡', text: '~200,000 API requests', sub: 'at 500 KB / request' },
+                    { icon: '🖼️', text: '~50,000 image loads', sub: 'at 2 MB / image' },
+                  ].map(ex => (
+                    <div key={ex.text} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <span style={{ fontSize: '0.85rem' }}>{ex.icon}</span>
+                      <div>
+                        <span style={{ fontSize: '0.8rem', color: '#1e40af', fontWeight: 500 }}>{ex.text}</span>
+                        <span style={{ fontSize: '0.7rem', color: '#64748b', marginLeft: 4 }}>{ex.sub}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Footer */}
