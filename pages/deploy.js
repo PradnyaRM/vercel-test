@@ -231,7 +231,7 @@ function Nav({ current }) {
       marginBottom: '2rem', background: '#ffffff',
       boxShadow: '0 1px 4px rgba(37,99,235,0.08)',
     }}>
-      <Link href="/" className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Dashboard</Link>
+      <Link href="/" className={`nav-link ${current === 'dashboard' ? 'active' : ''}`}>Assessment</Link>
       <span style={{ color: '#cbd5e1' }}>·</span>
       <Link href="/deploy" className={`nav-link ${current === 'deploy' ? 'active' : ''}`}>Deploy</Link>
       <span style={{ color: '#cbd5e1' }}>·</span>
